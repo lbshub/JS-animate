@@ -174,18 +174,15 @@
 				var start = parseInt(getStyle(el, prop)),
 					end = parseInt(props[prop]),
 					change = end - start,
-					startTime = new Date() - 0,
-					time = duration,
-					ease = easing;
+					startTime = new Date() - 0;
 				!function play() {
 					var newTime = new Date() - 0,
 						timestamp = newTime - startTime,
-						delta = ease(timestamp / time);
+						delta = easing(timestamp / duration);
 					setStyle(el, prop, parseInt(start + delta * change));
-					if (timestamp > time) {
+					if (timestamp > duration) {
 						setStyle(el, prop, end);
 						if (++count === amount) {
-							el.animated = null;
 							callback && callback();
 						}
 					} else {
