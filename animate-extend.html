@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>animate动画</title>
+	<style>
+		*{margin: 0; padding: 0;}
+		.demo{position: absolute; left: 10px; top:100px; width: 500px; height: 100px; background: #f00; border-color: #000; border-style: solid; border-width: 0;}
+		.btn{position: absolute; left: 10px; top:300px; width: 100px; text-align: center;}
+		.btn2{top:330px;}
+		.btn3{top:360px;}
+	</style>
+</head>
+<body>
+	
+
+	<div id="a1" class="demo"></div>
+	<input type="button"  value="开始" class="btn" id="btn1" />
+	<input type="button"  value="暂停" class="btn btn2" id="btn2" />
+	<input type="button"  value="结束" class="btn btn3" id="btn3" />
+
+	<script src="animate-extend.js"></script>
+	<script>
+		var a1 = document.getElementById('a1'),
+			btn1 = document.getElementById('btn1'),
+			btn2 = document.getElementById('btn2'),
+			btn3 = document.getElementById('btn3');
+		btn1.onclick = function() {
+			animate(a1, {
+				// width: 300,
+				// height: 300,
+				left: 500
+			}, {
+				duration: 2000,
+				easing: 'bounce',
+				callback: function() {
+					// alert('ok');
+					animate(a1, {top: 500, height: 300, opacity: 30}, {easing: 'easeInOutQuad', callback: function(){  animate(a1, {opacity: 85})   } });
+				}
+			});
+		};
+		btn2.onclick = function() {
+			stopAnimate(a1); //暂停
+			console.log( '是否正在进行动画: '+ isAnimate(a1) )
+		};
+		btn3.onclick = function() {
+			stopAnimate(a1, true); //结束
+			console.log( '是否正在进行动画: '+ isAnimate(a1) )
+		};
+	</script>
+
+</body>
+</html>
