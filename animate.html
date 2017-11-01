@@ -24,15 +24,31 @@
 				width: 300,
 				opacity: 60,
 				left: 500
-			}, {
-				duration: 600,
-				easing: 'bounce',
-				callback: function() {
-					// alert('ok');
-					animate(a1, {top: 500, height: 300}, {duration: 1000, easing: 'easeInOutQuad'});
-				}
+			}, 600, 'bounce', function() {
+				animate(a1, {
+					top: 500,
+					height: 300
+				}, 'easeInOutQuad', 1000, function() {
+					animate(a1, {
+						top: 100,
+						width: 500
+					}, {
+						duration: 2000,
+						easing: 'swing',
+						callback: function() {
+							animate(a1, {
+								left: 50,
+								top: 50,
+								width: 100,
+								height: 100
+							}, 300, function() {
+								alert('完成');
+							});
+						}
+					});
+				});
 			});
-		};
+		};		
 	</script>
 
 

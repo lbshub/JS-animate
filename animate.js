@@ -28,9 +28,12 @@
  * opts.duration 动画持续时间 默认400(毫秒)
  * opts.callback 动画完成后执行回调	
  * ===================================================
+ * use: animate(el,params,[speed],[easing],[callback])
+ * ===================================================
  **/
 
-;(function(window, document) {
+;
+(function(root, document) {
 	'use strict';
 
 	//动画公式
@@ -161,38 +164,61 @@
 	function animate(el, props, opts) {
 		el = typeof el === 'string' ? document.getElementById(el) : el;
 		if (!el) return;
-		opts = opts || {};
-		var duration = opts.duration || 400,
-			fps = opts.fps || 60,
-			easing = (opts.easing && tween[opts.easing]) || tween.linear,
-			callback = opts.callback || function() {},
-			p, prop, count = 0,
+		var opts = opts || {};
+		var duration = opts.duration || 400;
+		var fps = opts.fps || 60;
+		var easing = (opts.easing && tween[opts.easing]) || tween.linear;
+		var callback = opts.callback || function() {};
+		var args = arguments;
+		var p, prop, count = 0,
 			amount = 0;
+		var setProp = function(prop) {
+			var start = parseInt(getStyle(el, prop)),
+				end = parseInt(props[prop]),
+				change = end - start,
+				startTime = new Date() - 0;
+			if (start == end) {
+				return stop();
+			}
+
+			function play() {
+				var newTime = new Date() - 0,
+					timestamp = newTime - startTime,
+					delta = easing(timestamp / duration);
+				setStyle(el, prop, parseInt(start + delta * change));
+				if (timestamp > duration) {
+					stop();
+				} else {
+					setTimeout(play, 1000 / fps);
+				}
+			}
+
+			function stop() {
+				setStyle(el, prop, end);
+				if (++count === amount) {
+					callback && callback();
+				}
+			}
+
+			play();
+		};
+		if (args.length > 2) {
+			if (typeof args[2] === 'number') duration = args[2];
+			if (typeof args[2] === 'function') callback = args[2];
+			if (typeof args[2] === 'string') easing = tween[args[2]];
+			if (typeof args[3] === 'number') duration = args[3];
+			if (typeof args[3] === 'function') callback = args[3];
+			if (typeof args[3] === 'string') easing = tween[args[3]];
+			if (typeof args[4] === 'number') duration = args[4];
+			if (typeof args[4] === 'function') callback = args[4];
+			if (typeof args[4] === 'string') easing = tween[args[4]];
+		}
 		for (p in props) amount++;
 		for (prop in props) {
-			(function(prop) {
-				var start = parseInt(getStyle(el, prop)),
-					end = parseInt(props[prop]),
-					change = end - start,
-					startTime = new Date() - 0;
-				!function play() {
-					var newTime = new Date() - 0,
-						timestamp = newTime - startTime,
-						delta = easing(timestamp / duration);
-					setStyle(el, prop, parseInt(start + delta * change));
-					if (timestamp > duration) {
-						setStyle(el, prop, end);
-						if (++count === amount) {
-							callback && callback();
-						}
-					} else {
-						setTimeout(play, 1000 / fps);
-					}
-				}();
-			})(prop);
+			setProp(prop);
 		}
 	}
 
-	window.animate = animate;
+	root.animate = animate;
 
-}(window, document));
+}(this, document));
